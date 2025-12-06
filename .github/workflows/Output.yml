@@ -1,40 +1,16 @@
 name: Output example
-run-name: workflow example for input, executed for ${{github.actor}}
+run-name: workflow example for Output, executed for ${{github.actor}}
 on:
-
     workflow_dispatch:
-        inputs: 
-            version:
-                type: string
-                required: true
-                default: "dev"
-                description: "new release version"
-            card-number: 
-                type: number
-                required: true
-                description: "the card number for the task of this commit"  
-            make-deploy: 
-                type: boolean
-                required: true
-                description: "specify if the deploy shoud be done or not"
-            environment:
-                type: choice
-                required: true
-                description: "deploy environment"
-                options:
-                    - Development
-                    - Homologation
-                    - Production
 jobs:
-    input-values:
+    generating_Output:
         runs-on: ubuntu-latest
         steps:
-            - name: Showing the context of full input 
-              run: echo "${{toJson(inputs)}}"
-            - name: Showing the values individually
+            - name: Generating Output with shell
+              id: output-example
               run: |
-                echo "these are the give values on inputs"  
-                echo "The version is: ${{inputs.version}}"
-                echo "The card is: ${{inputs.card-number}}"
-                echo "Should make the deploy: ${{inputs.make-deploy}}"
-                echo "The environment is: ${{inputs.environment}}"
+                ACTION_RANDOM=$(( $RANDOM))
+                echo "action_random=ACTION_RANDOM" >> $GITHUB_OUTPUT
+
+            - name: Showing output action example    
+              run: echo "${{steps.output-example.outputs.action_random}}"
