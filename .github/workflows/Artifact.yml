@@ -1,0 +1,45 @@
+name: Artifact
+run-name: workflow for artifact, run ${{github.actor}}
+on:
+  workflow_dispatch:
+jobs:
+  upload-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List of archives
+        run: ls
+      - name: generating archives
+        run: |
+          mkdir articfats
+          echo "archive test 01" > ./artifact/first_archive.txt  
+          echo "archive test 02" > ./artifact/second_archive.txt
+          echo "archive test 03" > ./artifact/third_archive.txt
+          echo "archive test 04" > ./artifact/fourth_archive.txt
+
+      - name: sending archives
+        uses: actions/upload-artifact@v4
+        id: upload-artifact
+        with:  
+          name: artifact-test
+          path: ./articfats
+          
+      - name: list of archives
+        run: ls 
+      - name: address to get the artifact
+
+        run: |
+         echo "${{steps.upload-artifact.outputs}}"  
+
+  download-artifact:
+    runs-on: ubuntu-latest 
+    needs: [upload-artifact]     
+    steps:
+      - name: List of archives
+        run: ls
+
+      - name: download artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: artifact-test
+      - name: loading archives
+        run: ls    
