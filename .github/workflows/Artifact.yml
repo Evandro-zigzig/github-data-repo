@@ -10,7 +10,7 @@ jobs:
         run: ls
       - name: generating archives
         run: |
-          mkdir articfats
+          mkdir articfat
           echo "archive test 01" > ./artifact/first_archive.txt  
           echo "archive test 02" > ./artifact/second_archive.txt
           echo "archive test 03" > ./artifact/third_archive.txt
