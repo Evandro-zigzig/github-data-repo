@@ -1,16 +1,42 @@
 name: Output example
-run-name: workflow example for Output, executed for ${{github.actor}}
-on:
-    workflow_dispatch:
-jobs:
-    generating_Output:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Generating Output with shell
-              id: output-example
-              run: |
-                ACTION_RANDOM=$(( $RANDOM))
-                echo "action_random=$ACTION_RANDOM" >> $GITHUB_OUTPUT
+run-name: workflow example for Output, executed for ${{ github.actor }}
 
-            - name: Showing output action example    
-              run: echo "${{steps.output-example.outputs.action_random}}"
+on:
+  workflow_dispatch:
+
+jobs:
+  generating_output:
+    runs-on: ubuntu-latest
+
+    outputs:
+      output_shell: ${{ steps.output-example.outputs.action_random }}
+      output_generated_password: ${{ steps.generatedpassword.outputs.password }}
+
+    steps:
+      - name: Generating Output with shell
+        id: output-example
+        run: |
+          ACTION_RANDOM=$(( RANDOM ))
+          echo "action_random=$ACTION_RANDOM" >> $GITHUB_OUTPUT
+
+      - name: Showing output action example
+        run: echo "${{ steps.output-example.outputs.action_random }}"
+
+      - name: password_generator
+        id: generatedpassword
+        uses: aammirmirza/RandomPasswordGenerator@v1.1
+        with:
+          length: 15
+
+      - name: showing output action of the password
+        run: echo "${{ steps.generatedpassword.outputs.password }}"
+
+  showing-values:
+    needs: generating_output
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: showing outputs from generating_output
+        run: |
+          echo "Output Shell: ${{ needs.generating_output.outputs.output_shell }}"
+          echo "Output Password: ${{ needs.generating_output.outputs.output_generated_password }}"
